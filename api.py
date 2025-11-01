@@ -93,6 +93,9 @@ class TTSEngine:
             sess_options = ort.SessionOptions()
             sess_options.inter_op_num_threads = 2
             sess_options.intra_op_num_threads = 2
+            # Enable deterministic execution
+            sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+            sess_options.enable_mem_pattern = False
             
             for model_name, model_path in AVAILABLE_MODELS.items():
                 if model_path.exists():
@@ -151,12 +154,24 @@ class TTSEngine:
         return wav_buffer.read()
 
     def synthesize(self, text: str, length_scale: float = 1.0, noise_scale: float = 0.667, 
-                   noise_w: float = 0.8, volume: float = 1.0, model: str = "male") -> tuple[np.ndarray, dict]:
+                   noise_w: float = 0.8, volume: float = 1.0, model: str = "male", seed: int = 42) -> tuple[np.ndarray, dict]:
         """
         Synthesize Hebrew text to audio
         Returns: (audio_data, metadata)
         """
         start_time = time.perf_counter()
+        
+        # Set deterministic seed based on text content for consistent output
+        import hashlib
+        import random
+        text_hash = int(hashlib.md5(text.encode('utf-8')).hexdigest()[:8], 16)
+        deterministic_seed = (seed + text_hash) % (2**32)
+        np.random.seed(deterministic_seed)
+        random.seed(deterministic_seed)
+        
+        # Also try to set environment variable for ONNX Runtime
+        import os
+        os.environ['ORT_DISABLE_ALL_OPTIMIZATION'] = '1'
         
         try:
             # Check if model is available
@@ -370,8 +385,7 @@ async def synthesize_stream(request: TTSRequest):
     Returns complete WAV file (chunking WAV breaks the header)
     """
     try:
-        # For now, we'll do the full synthesis and then stream it in chunks
-        # Real streaming would require modifying the underlying TTS engine
+        # Generate complete audio (same as regular endpoint)
         audio_data, metadata = tts_engine.synthesize(
             text=request.text,
             length_scale=request.length_scale,

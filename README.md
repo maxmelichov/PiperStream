@@ -117,6 +117,8 @@ The FastAPI server provides a complete REST API with Swagger documentation.
 
 ### API Examples
 
+> **💡 Note**: All examples use optimal default parameters (`length_scale: 1.0`, `noise_scale: 0.667`, `noise_w: 0.8`) unless explicitly overridden. You only need to specify `text` and `model`!
+
 **1. Health Check:**
 ```bash
 curl http://localhost:8000/health
@@ -135,10 +137,7 @@ curl -X POST "http://localhost:8000/synthesize/audio" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "שלום עולם",
-    "model": "male",
-    "length_scale": 1.0,
-    "noise_scale": 0.667,
-    "noise_w": 0.8
+    "model": "male"
   }' \
   --output male_output.wav
 ```
@@ -149,10 +148,7 @@ curl -X POST "http://localhost:8000/synthesize/audio" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "שלום עולם",
-    "model": "female", 
-    "length_scale": 1.0,
-    "noise_scale": 0.667,
-    "noise_w": 0.8
+    "model": "female"
   }' \
   --output female_output.wav
 ```
@@ -163,9 +159,7 @@ curl -X POST "http://localhost:8000/synthesize/stream" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "זאת בדיקת מערכת, אני רוצה לראות אם זה עובד",
-    "model": "male",
-    "length_scale": 1.2,
-    "noise_scale": 0.8
+    "model": "male"
   }' \
   --output streaming_male.wav
 ```
@@ -176,9 +170,7 @@ curl -X POST "http://localhost:8000/synthesize/stream" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "זאת בדיקת מערכת, אני רוצה לראות אם זה עובד", 
-    "model": "female",
-    "length_scale": 1.2,
-    "noise_scale": 0.8
+    "model": "female"
   }' \
   --output streaming_female.wav
 ```
@@ -198,10 +190,10 @@ curl -X POST "http://localhost:8000/synthesize" \
 ```json
 {
   "text": "שלום עולם",                 // Required: Hebrew text
-  "length_scale": 1.0,              // Optional: Speech rate (0.1-3.0)
-  "noise_scale": 0.667,             // Optional: Voice variation (0.1-2.0)  
-  "noise_w": 0.8,                   // Optional: Pronunciation variation (0.1-2.0)
-  "volume": 1.0,                    // Optional: Volume multiplier (0.1-2.0)
+  "length_scale": 1.0,              // Optional: Speech rate (0.1-3.0, default: 1.0)
+  "noise_scale": 0.667,             // Optional: Voice variation (0.1-2.0, default: 0.667)  
+  "noise_w": 0.8,                   // Optional: Pronunciation variation (0.1-2.0, default: 0.8)
+  "volume": 1.0,                    // Optional: Volume multiplier (0.1-2.0, default: 1.0)
   "model": "male"                   // Optional: Voice model ("male" or "female", default: "male")
 }
 ```
@@ -230,9 +222,9 @@ Audio endpoints include helpful headers:
 ```python
 import requests
 
-# Synthesize and save audio
+# Synthesize and save audio (using optimal defaults)
 response = requests.post("http://localhost:8000/synthesize/audio", 
-    json={"text": "שלום עולם", "length_scale": 1.0})
+    json={"text": "שלום עולם", "model": "male"})
 
 if response.status_code == 200:
     with open("output.wav", "wb") as f:
@@ -247,8 +239,7 @@ const response = await fetch('http://localhost:8000/synthesize/audio', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     text: 'שלום עולם',
-    length_scale: 1.0,
-    noise_scale: 0.667
+    model: 'female'  // Using optimal defaults for other parameters
   })
 });
 
@@ -260,12 +251,13 @@ if (response.ok) {
 }
 ```
 
-**cURL with custom parameters:**
+**cURL with custom parameters (override defaults):**
 ```bash
 curl -X POST "http://localhost:8000/synthesize/audio" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "זה טקסט ארוך יותר לבדיקת המערכת",
+    "model": "female",
     "length_scale": 0.8,
     "noise_scale": 0.9,
     "noise_w": 1.1,
@@ -285,9 +277,9 @@ curl -X POST "http://localhost:8000/synthesize/audio" \
 | `--phonikud` | ✅ | - | Path to Phonikud ONNX model |
 | `--text` | ❌ | Hebrew sample text | Text to synthesize |
 | `--out` | ❌ | `out.wav` | Output WAV file path |
-| `--length_scale` | ❌ | `1.20` | Speech rate (1.0=normal, <1.0=faster, >1.0=slower) |
-| `--noise_scale` | ❌ | `0.64` | Voice variation/expressiveness |
-| `--noise_w` | ❌ | `1.0` | Pronunciation variation |
+| `--length_scale` | ❌ | `1.0` | Speech rate (1.0=optimal balance, <1.0=faster, >1.0=slower) |
+| `--noise_scale` | ❌ | `0.667` | Voice variation/expressiveness (optimal) |
+| `--noise_w` | ❌ | `0.8` | Pronunciation variation (optimal) |
 | `--volume` | ❌ | `1.0` | Output volume multiplier |
 | `--chunk` | ❌ | `8192` | Audio chunk size for streaming |
 
@@ -452,7 +444,7 @@ sudo apt-get install docker-compose-plugin
 | Setting | Length Scale | Noise Scale | Noise W | Use Case |
 |---------|--------------|-------------|---------|----------|
 | **Fast** | 0.8 | 0.5 | 0.6 | Quick previews |
-| **Balanced** | 1.0 | 0.667 | 0.8 | General use |
+| **Optimal (Default)** | 1.0 | 0.667 | 0.8 | General use (recommended) |
 | **High Quality** | 1.2 | 0.8 | 1.0 | Final output |
 
 ## 🔬 Model Training
