@@ -1,0 +1,43 @@
+services:
+  streampiper-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Optional: Mount local onnx directory for development
+      # - ./onnx:/app/onnx
+      # Optional: Mount output directory
+      - ./output:/app/output
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - streampiper
+
+  # Optional: Add nginx reverse proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - streampiper-api
+  #   networks:
+  #     - streampiper
+
+networks:
+  streampiper:
+    driver: bridge
+
+volumes:
+  output:

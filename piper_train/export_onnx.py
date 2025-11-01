@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 import argparse
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
 
 import torch
 
-from .vits.lightning import VitsModel
+# Add the parent directory to sys.path to allow absolute imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from piper_train.vits.lightning import VitsModel
 
 _LOGGER = logging.getLogger("piper_train.export_onnx")
 
@@ -18,8 +22,8 @@ def main() -> None:
     torch.manual_seed(1234)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("checkpoint", help="Path to model checkpoint (.ckpt)")
-    parser.add_argument("output", help="Path to output model (.onnx)")
+    parser.add_argument("checkpoint", help="Path to model checkpoint (.ckpt)", default="female_epoch=67-step=261800.ckpt")
+    parser.add_argument("output", help="Path to output model (.onnx)", default="piper_medium_female.onnx")
 
     parser.add_argument(
         "--debug", action="store_true", help="Print DEBUG messages to the console"
@@ -39,10 +43,11 @@ def main() -> None:
     args.output = Path(args.output)
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
-    model = VitsModel.load_from_checkpoint(args.checkpoint, dataset=None)
+    # Force model to load on CPU to avoid CUDA memory issues
+    model = VitsModel.load_from_checkpoint(args.checkpoint, dataset=None, map_location='cpu')
     model_g = model.model_g
 
-    # Move model to CPU to avoid device mismatch during export
+    # Ensure model is on CPU to avoid device mismatch during export
     model_g = model_g.cpu()
 
     num_symbols = model_g.n_vocab

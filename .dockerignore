@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+.venv/
+env/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Output files
+output/
+*.wav
+*.mp3
+
+# Logs
+*.log
+logs/
+
+# Development files
+test_*
+example_*
+debug_*
+
+# Node modules (if any)
+node_modules/
+
+# PyTorch checkpoints (large files)
+*.ckpt
+*.pt
+*.pth
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Pytest
+.pytest_cache/
+.coverage
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
