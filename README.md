@@ -41,19 +41,21 @@ StreamPiper/
 ### Prerequisites
 
 - Python 3.8+
-- Virtual environment activated
 
 ### Installation
 
-1. **Activate the virtual environment:**
+1. **Create and activate virtual environment:**
    ```bash
+   python -m venv venv
    source venv/bin/activate
    ```
 
-2. **Install dependencies** (if not already installed):
+2. **Install all dependencies:**
    ```bash
-   pip install torch onnxruntime numpy phonikud_tts
+   pip install -r requirements.txt
    ```
+
+That's it! All dependencies (including PyTorch, ONNX Runtime, FastAPI, and Phonikud) will be installed automatically.
 
 ### Basic Usage
 
@@ -473,7 +475,9 @@ unzip -o onnx.zip
 
 **Missing dependencies:**
 ```bash
-pip install torch onnxruntime numpy phonikud_tts
+# Ensure virtual environment is activated
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 **Docker dependencies:**
@@ -660,8 +664,10 @@ curl -X POST "http://localhost:8000/synthesize/audio" \
 
 ### For Command Line Users:
 ```bash
-# Activate virtual environment
+# Setup (one-time)
+python -m venv venv
 source venv/bin/activate
+pip install -r requirements.txt
 
 # Run TTS
 python piper_stream_onnx.py \
