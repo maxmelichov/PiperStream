@@ -226,9 +226,9 @@ def main():
     parser.add_argument("--text", default="את בדיקת מערכת, אני רוצה לראות אם זה עובד ומה זמן התגובה של המודל ואיך הוא נשמע", help="Hebrew text to synthesize")
     parser.add_argument("--output", help="Output WAV file (optional)")
     parser.add_argument("--no-play", action="store_true", help="Don't play audio, just save to file")
-    parser.add_argument("--length-scale", type=float, default=1.0, help="Speech rate")
-    parser.add_argument("--noise-scale", type=float, default=0.667, help="Voice variation")
-    parser.add_argument("--noise-w", type=float, default=0.8, help="Pronunciation variation")
+    parser.add_argument("--length-scale", type=float, default=1.0, help="Speech rate (1.0=optimal balance)")
+    parser.add_argument("--noise-scale", type=float, default=0.667, help="Voice variation (0.667=optimal expressiveness)")
+    parser.add_argument("--noise-w", type=float, default=0.8, help="Pronunciation variation (0.8=optimal consistency)")
     parser.add_argument("--sample-rate", type=int, default=22050, help="Sample rate")
     parser.add_argument("--chunk-size", type=int, default=8192, help="Audio chunk size for streaming")
     

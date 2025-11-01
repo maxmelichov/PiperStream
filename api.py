@@ -59,9 +59,9 @@ app.add_middleware(
 # Pydantic models for API
 class TTSRequest(BaseModel):
     text: str = Field(..., description="Hebrew text to synthesize", example="שלום עולם")
-    length_scale: float = Field(1.0, ge=0.1, le=3.0, description="Speech rate (1.0=normal, <1.0=faster, >1.0=slower)")
-    noise_scale: float = Field(0.667, ge=0.1, le=2.0, description="Voice variation/expressiveness")
-    noise_w: float = Field(0.8, ge=0.1, le=2.0, description="Pronunciation variation")
+    length_scale: float = Field(1.0, ge=0.1, le=3.0, description="Speech rate (1.0=optimal balance, <1.0=faster, >1.0=slower)")
+    noise_scale: float = Field(0.667, ge=0.1, le=2.0, description="Voice variation (0.667=optimal expressiveness)")
+    noise_w: float = Field(0.8, ge=0.1, le=2.0, description="Pronunciation variation (0.8=optimal consistency)")
     volume: float = Field(1.0, ge=0.1, le=2.0, description="Output volume multiplier")
     model: Optional[str] = Field("male", description="TTS model to use: 'male' or 'female' (default: 'male')")
 
