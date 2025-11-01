@@ -133,6 +133,23 @@ class TTSEngine:
         audio_float = np.clip(audio_float, -1.0, 1.0)
         return (audio_float * 32767).astype(np.int16)
 
+    def audio_to_wav_bytes(self, audio_data):
+        """Convert audio data to WAV bytes."""
+        audio_int16 = self.float_to_int16(audio_data)
+        
+        # Create WAV file in memory
+        import io
+        wav_buffer = io.BytesIO()
+        
+        with wave.open(wav_buffer, 'wb') as wav_file:
+            wav_file.setnchannels(1)  # Mono
+            wav_file.setsampwidth(2)  # 16-bit
+            wav_file.setframerate(SAMPLE_RATE)
+            wav_file.writeframes(audio_int16.tobytes())
+        
+        wav_buffer.seek(0)
+        return wav_buffer.read()
+
     def synthesize(self, text: str, length_scale: float = 1.0, noise_scale: float = 0.667, 
                    noise_w: float = 0.8, volume: float = 1.0, model: str = "male") -> tuple[np.ndarray, dict]:
         """
@@ -350,7 +367,7 @@ async def synthesize_audio(request: TTSRequest):
 async def synthesize_stream(request: TTSRequest):
     """
     Synthesize Hebrew text to speech with streaming response
-    Returns audio chunks as they are generated
+    Returns complete WAV file (chunking WAV breaks the header)
     """
     try:
         # For now, we'll do the full synthesis and then stream it in chunks
@@ -366,18 +383,13 @@ async def synthesize_stream(request: TTSRequest):
         
         wav_bytes = tts_engine.audio_to_wav_bytes(audio_data)
         
-        async def stream_audio():
-            chunk_size = 8192
-            for i in range(0, len(wav_bytes), chunk_size):
-                chunk = wav_bytes[i:i + chunk_size]
-                yield chunk
-                # Small delay to simulate streaming
-                await asyncio.sleep(0.01)
-        
-        return StreamingResponse(
-            stream_audio(),
+        # Don't chunk WAV files as it breaks the WAV header structure
+        # Return complete WAV file instead
+        return Response(
+            content=wav_bytes,
             media_type="audio/wav",
             headers={
+                "Content-Disposition": "attachment; filename=streaming.wav",
                 "X-Audio-Duration": str(metadata['audio_duration']),
                 "X-Processing-Time": str(metadata['processing_time']),
                 "X-RTF": str(metadata['rtf'])
