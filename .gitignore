@@ -1,0 +1,7 @@
+venv
+onnx
+.ort_cache/
+phonikud_tts/__pycache__
+piper_train/__pycache__
+phonikud/__pycache__
+phonikud/expander/__pycache__
