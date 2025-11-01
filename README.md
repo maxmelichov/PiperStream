@@ -1,6 +1,6 @@
-# StreamPiper - Hebrew Text-to-Speech with ONNX Streaming
+# StreamPiper - Hebrew Text-to-Speech API
 
-A high-performance Hebrew text-to-speech system using ONNX models with real-time streaming capabilities.
+High-performance Hebrew TTS with dual voices (male/female) and Swagger UI.
 
 ## 🎯 Features
 
@@ -18,140 +18,57 @@ A high-performance Hebrew text-to-speech system using ONNX models with real-time
 
 ```
 StreamPiper/
-├── README.md                    # This documentation  
-├── api.py                      # FastAPI server with Swagger docs
-├── piper_stream_onnx.py        # Command-line streaming TTS script
-├── requirements.txt            # Python dependencies
-├── Dockerfile                  # Docker container configuration
-├── docker-compose.yml          # Docker Compose setup
-├── onnx.zip                    # ONNX models archive (you need to add this)
-├── onnx/                       # ONNX models and configurations (extracted)
-│   ├── model.config.json       # Model configuration and phoneme mappings
-│   ├── piper_medium_male.onnx  # Male voice TTS model 
-│   ├── female_model.onnx       # Female voice TTS model (custom trained)
-│   └── phonikud-1.0.onnx       # Phonikud diacritization model
-├── venv/                       # Python virtual environment
-├── piper_train/               # Training utilities and scripts
-├── phonikud/                  # Phonikud library source
-└── phonikud_tts/              # TTS utilities
+├── requirements.txt            # Install with: pip install -r requirements.txt
+├── api.py                      # REST API server (run with Docker)
+├── piper_stream_onnx.py        # Command-line TTS script
+├── onnx.zip                    # Model files (extract to onnx/ folder)
+└── onnx/                       # Voice models and config
+    ├── piper_medium_male.onnx  # Male voice
+    ├── female_model.onnx       # Female voice  
+    ├── model.config.json       # Model settings
+    └── phonikud-1.0.onnx       # Hebrew diacritization
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+- Docker installed
+- `onnx.zip` file in project root
 
-- Python 3.8+
-
-### Installation
-
-1. **Create and activate virtual environment:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   ```
-
-2. **Install all dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-That's it! All dependencies (including PyTorch, ONNX Runtime, FastAPI, and Phonikud) will be installed automatically.
-
-### Basic Usage
-
-**Generate Hebrew speech with male voice:**
+### Build & Run
 ```bash
-python piper_stream_onnx.py \
-    --model onnx/piper_medium_male.onnx \
-    --config onnx/model.config.json \
-    --phonikud onnx/phonikud-1.0.onnx \
-    --text "שלום עולם" \
-    --out output_male.wav
+docker compose up --build -d
 ```
 
-**Generate Hebrew speech with female voice:**
+### Access Swagger UI
+**http://localhost:8000/docs**
+
+### Test API
 ```bash
-python piper_stream_onnx.py \
-    --model onnx/female_model.onnx \
-    --config onnx/model.config.json \
-    --phonikud onnx/phonikud-1.0.onnx \
-    --text "שלום עולם" \
-    --out output_female.wav
+curl http://localhost:8000/health
 ```
 
-**Full command with custom parameters (female voice):**
+**That's it!** 🎉
+
+### Generate Speech
 ```bash
-python piper_stream_onnx.py \
-    --model onnx/female_model.onnx \
-    --config onnx/model.config.json \
-    --phonikud onnx/phonikud-1.0.onnx \
-    --text "זאת בדיקת מערכת, אני רוצה לראות אם זה עובד" \
-    --out output_female.wav \
-    --length_scale 1.0 \
-    --noise_scale 0.64 \
-    --noise_w 1.0
+# Male voice
+curl -X POST "http://localhost:8000/synthesize/audio" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "שלום עולם", "model": "male"}' \
+  --output hello_male.wav
+
+# Female voice
+curl -X POST "http://localhost:8000/synthesize/audio" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "שלום עולם", "model": "female"}' \
+  --output hello_female.wav
 ```
 
-## 🐳 Docker Deployment
-
-### Prerequisites for Docker
-- Docker Engine 20.10+
-- Docker Compose v2.0+
-- `onnx.zip` file containing all model files
-
-### Setup Steps
-
-**1. Prepare the models archive:**
+### Stop Service
 ```bash
-# Create onnx.zip with all model files
-zip -r onnx.zip onnx/
-# Should contain:
-# - onnx/piper_medium_male.onnx   (Male voice model)
-# - onnx/female_model.onnx        (Female voice model) 
-# - onnx/model.config.json        (Model configuration)
-# - onnx/phonikud-1.0.onnx        (Phonikud diacritization)
+docker compose down
 ```
-
-**2. Build and run with Docker Compose (Recommended):**
-```bash
-# Clone or download the project
-# Ensure onnx.zip is in the project root
-
-# Build and start the service
-docker-compose up --build -d
-
-# Check logs
-docker-compose logs -f streampiper-api
-
-# Stop the service
-docker-compose down
-```
-
-**3. Alternative: Build and run with Docker directly:**
-```bash
-# Build the image
-docker build -t streampiper-api .
-
-# Run the container
-docker run -d \
-  --name streampiper \
-  -p 8000:8000 \
-  -v $(pwd)/output:/app/output \
-  streampiper-api
-
-# Check logs
-docker logs -f streampiper
-```
-
-### Docker Configuration
-
-**Environment Variables:**
-- `PYTHONUNBUFFERED=1`: Real-time log output
-- Custom port: Modify `docker-compose.yml` or use `-p <port>:8000`
-
-**Volumes:**
-- `./output:/app/output`: Mount output directory for generated audio files
-- Optional: `./onnx:/app/onnx` for development (override built-in models)
 
 ## 🌐 REST API Usage
 
@@ -635,48 +552,18 @@ For issues:
 
 ---
 
-## 🎯 Quick Setup Summary
+## 🎯 Super Simple Setup
 
-### For API Users (Recommended):
 ```bash
-# 1. Ensure onnx.zip is in project root
-# 2. Start with Docker Compose
-docker-compose up --build -d
+# 1. Make sure you have onnx.zip in the project folder
+# 2. Run this single command:
+docker compose up --build -d
 
-# 3. Test the API
-curl http://localhost:8000/health
-
-# 4. Generate speech (Male voice)
-curl -X POST "http://localhost:8000/synthesize/audio" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "שלום עולם", "model": "male"}' \
-  --output hello_male.wav
-
-# 5. Generate speech (Female voice)
-curl -X POST "http://localhost:8000/synthesize/audio" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "שלום עולם", "model": "female"}' \
-  --output hello_female.wav
-
-# 6. Open Swagger docs
-# Visit: http://localhost:8000/docs
+# 3. Open Swagger UI in your browser:
+# http://localhost:8000/docs
 ```
 
-### For Command Line Users:
-```bash
-# Setup (one-time)
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Run TTS
-python piper_stream_onnx.py \
-  --model onnx/piper_medium_male.onnx \
-  --config onnx/model.config.json \
-  --phonikud onnx/phonikud-1.0.onnx \
-  --text "שלום עולם" \
-  --out output.wav
-```
+**Done!** You now have a running Hebrew TTS API with Swagger documentation! 🎤🔊
 
 ---
 
