@@ -381,11 +381,10 @@ async def synthesize_audio(request: TTSRequest):
 @app.post("/synthesize/stream")
 async def synthesize_stream(request: TTSRequest):
     """
-    Synthesize Hebrew text to speech with streaming response
-    Returns complete WAV file (chunking WAV breaks the header)
+    Synthesize Hebrew text to speech and stream a WAV file over HTTP.
+    Sends the WAV header first, followed by PCM data in chunks.
     """
     try:
-        # Generate complete audio (same as regular endpoint)
         audio_data, metadata = tts_engine.synthesize(
             text=request.text,
             length_scale=request.length_scale,
@@ -395,37 +394,64 @@ async def synthesize_stream(request: TTSRequest):
             model=request.model or "male"
         )
         
-        wav_bytes = tts_engine.audio_to_wav_bytes(audio_data)
+        def generate_wav_chunks():
+            import struct
+            num_channels = 1
+            bits_per_sample = 16
+            sample_rate = SAMPLE_RATE
+            audio_int16 = tts_engine.float_to_int16(audio_data)
+            num_samples = len(audio_int16)
+            
+            byte_rate = sample_rate * num_channels * bits_per_sample // 8
+            block_align = num_channels * bits_per_sample // 8
+            subchunk2_size = num_samples * num_channels * bits_per_sample // 8
+            chunk_size = 36 + subchunk2_size
+            
+            # WAV header (PCM)
+            header = struct.pack(
+                "<4sI4s4sIHHIIHH4sI",
+                b"RIFF",
+                chunk_size,
+                b"WAVE",
+                b"fmt ",
+                16,
+                1,
+                num_channels,
+                sample_rate,
+                byte_rate,
+                block_align,
+                bits_per_sample,
+                b"data",
+                subchunk2_size,
+            )
+            yield header
+            
+            # Stream PCM data in chunks (2 bytes per sample for int16)
+            bytes_per_chunk = 4096
+            start = 0
+            while start < num_samples:
+                end = min(start + bytes_per_chunk // 2, num_samples)
+                chunk = audio_int16[start:end].tobytes()
+                if chunk:
+                    yield chunk
+                start = end
         
-        # Don't chunk WAV files as it breaks the WAV header structure
-        # Return complete WAV file instead
-        return Response(
-            content=wav_bytes,
+        return StreamingResponse(
+            generate_wav_chunks(),
             media_type="audio/wav",
             headers={
                 "Content-Disposition": "attachment; filename=streaming.wav",
                 "X-Audio-Duration": str(metadata['audio_duration']),
                 "X-Processing-Time": str(metadata['processing_time']),
-                "X-RTF": str(metadata['rtf'])
+                "X-RTF": str(metadata['rtf']),
+                "X-Sample-Rate": str(SAMPLE_RATE),
+                "X-Format": "s16le",
+                "X-Channels": "1"
             }
         )
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/models")
-async def list_models():
-    """List available models"""
-    models = []
-    if DEFAULT_MODEL.exists():
-        models.append({
-            "name": "piper_medium_male",
-            "path": str(DEFAULT_MODEL),
-            "config": str(DEFAULT_CONFIG),
-            "type": "Hebrew TTS"
-        })
-    
-    return {"models": models}
 
 # Development server
 if __name__ == "__main__":
