@@ -27,7 +27,7 @@ from phonikud_tts import Phonikud, phonemize
 # Configuration
 MODEL_DIR = Path("onnx")
 MALE_MODEL = MODEL_DIR / "piper_medium_male.onnx"
-FEMALE_MODEL = MODEL_DIR / "female_model.onnx"
+FEMALE_MODEL = MODEL_DIR / "piper_medium_female.onnx"
 DEFAULT_CONFIG = MODEL_DIR / "model.config.json" 
 DEFAULT_PHONIKUD = MODEL_DIR / "phonikud-1.0.onnx"
 SAMPLE_RATE = 22050

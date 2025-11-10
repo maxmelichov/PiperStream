@@ -24,7 +24,7 @@ StreamPiper/
 ├── onnx.zip                    # Model files (extract to onnx/ folder)
 └── onnx/                       # Voice models and config
     ├── piper_medium_male.onnx  # Male voice
-    ├── female_model.onnx       # Female voice  
+    ├── piper_medium_female.onnx # Female voice  
     ├── model.config.json       # Model settings
     └── phonikud-1.0.onnx       # Hebrew diacritization
 ```
@@ -487,8 +487,8 @@ python piper_stream_onnx.py --model onnx/piper_medium_male.onnx --config onnx/mo
 python piper_stream_onnx.py --model onnx/piper_medium_male.onnx --config onnx/model.config.json --phonikud onnx/phonikud-1.0.onnx --text "להתראות" --out goodbye_male.wav
 
 # Process with female voice
-python piper_stream_onnx.py --model onnx/female_model.onnx --config onnx/model.config.json --phonikud onnx/phonikud-1.0.onnx --text "שלום" --out hello_female.wav
-python piper_stream_onnx.py --model onnx/female_model.onnx --config onnx/model.config.json --phonikud onnx/phonikud-1.0.onnx --text "להתראות" --out goodbye_female.wav
+python piper_stream_onnx.py --model onnx/piper_medium_female.onnx --config onnx/model.config.json --phonikud onnx/phonikud-1.0.onnx --text "שלום" --out hello_female.wav
+python piper_stream_onnx.py --model onnx/piper_medium_female.onnx --config onnx/model.config.json --phonikud onnx/phonikud-1.0.onnx --text "להתראות" --out goodbye_female.wav
 ```
 
 ### Integration Example
@@ -498,7 +498,7 @@ import os
 
 def synthesize_hebrew(text, output_file, voice="male"):
     """Synthesize Hebrew text with choice of voice model"""
-    model_file = "onnx/piper_medium_male.onnx" if voice == "male" else "onnx/female_model.onnx"
+    model_file = "onnx/piper_medium_male.onnx" if voice == "male" else "onnx/piper_medium_female.onnx"
     
     cmd = [
         "python", "piper_stream_onnx.py",
