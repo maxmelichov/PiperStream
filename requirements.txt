@@ -78,4 +78,4 @@ tqdm==4.67.1
 transformers==4.48.3
 phonemizer
 phonikud-onnx
-git+https://github.com/thewh1teagle/phonikud
+phonikud
