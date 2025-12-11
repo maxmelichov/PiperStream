@@ -9,6 +9,7 @@ import time
 from phonikud_tts import Phonikud, phonemize
 import threading
 import queue
+import os
 
 # Optional sounddevice import for real-time playback
 try:
@@ -39,11 +40,11 @@ class StreamingTTS:
         self.sample_rate = sample_rate
         self.audio_queue = queue.Queue()
         self.playing = False
-        
+        num_threads = os.cpu_count() // 2
         # Load ONNX model
         print(f"Loading ONNX model: {model_path}")
         sess_options = ort.SessionOptions()
-        sess_options.inter_op_num_threads = 2
+        sess_options.inter_op_num_threads = num_threads
         sess_options.intra_op_num_threads = 2
         
         self.session = ort.InferenceSession(
