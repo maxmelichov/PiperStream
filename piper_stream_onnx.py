@@ -223,7 +223,7 @@ def main():
     parser.add_argument("--model", required=True, help="Path to ONNX model")
     parser.add_argument("--config", required=True, help="Path to model config JSON")
     parser.add_argument("--phonikud", required=True, help="Path to Phonikud ONNX model")
-    parser.add_argument("--text", default="את בדיקת מערכת, אני רוצה לראות אם זה עובד ומה זמן התגובה של המודל ואיך הוא נשמע", help="Hebrew text to synthesize")
+    parser.add_argument("--text", default="אני כאן כדי לעזור לך עם כל שאלה שיש לך לגבי הפלטפורמה שלנו", help="Hebrew text to synthesize")
     parser.add_argument("--output", help="Output WAV file (optional)")
     parser.add_argument("--no-play", action="store_true", help="Don't play audio, just save to file")
     parser.add_argument("--length-scale", type=float, default=1.0, help="Speech rate (1.0=optimal balance)")
