@@ -36,18 +36,18 @@ def main():
     config_path = Path(args.config)
     
     if not phonikud_path.exists():
-        print(f"❌ Phonikud model not found: {phonikud_path}")
+        print(f"Phonikud model not found: {phonikud_path}")
         return
     
     if not model_path.exists():
-        print(f"❌ TTS model not found: {model_path}")
+        print(f"TTS model not found: {model_path}")
         return
         
     if not config_path.exists():
-        print(f"❌ Config file not found: {config_path}")
+        print(f"Config file not found: {config_path}")
         return
     
-    print("🔄 Loading models...")
+    print("Loading models...")
     num_threads = os.cpu_count() // 2
     # Encourage deterministic, stable behavior
     os.environ.setdefault('ORT_DISABLE_ALL_OPTIMIZATION', '1')
@@ -80,34 +80,34 @@ def main():
     try:
         metadata = phonikud.get_metadata()
         commit = metadata.get("commit", "unknown")
-        print(f"📋 Phonikud commit: {commit}")
+        print(f"Phonikud commit: {commit}")
     except Exception:
-        print("📋 Phonikud commit: unknown")
+        print("Phonikud commit: unknown")
     
-    print(f"📝 Input text: {args.text}")
-    print(f"🎛️  Mode: {args.mode}")
+    print(f"Input text: {args.text}")
+    print(f"Mode: {args.mode}")
     
     # Process text based on mode
     if args.mode == "text":
-        print("🔄 Adding diacritics...")
+        print("Adding diacritics...")
         with_diacritics = phonikud.add_diacritics(args.text)
-        print(f"📝 With diacritics: {with_diacritics}")
+        print(f"With diacritics: {with_diacritics}")
         
-        print("🔄 Converting to phonemes...")
+        print("Converting to phonemes...")
         phonemes = phonemize(with_diacritics)
         
     elif args.mode == "diacritics":
         with_diacritics = args.text
-        print(f"📝 With diacritics: {with_diacritics}")
+        print(f"With diacritics: {with_diacritics}")
         
-        print("🔄 Converting to phonemes...")
+        print("Converting to phonemes...")
         phonemes = phonemize(with_diacritics)
         
     else:  # phonemes mode
         phonemes = args.text
         with_diacritics = None
     
-    print(f"🔤 Phonemes: {phonemes}")
+    print(f"Phonemes: {phonemes}")
     
     # Convert phonemes to IDs (same as piper_stream_onnx.py)
     phoneme_id_map = config['phoneme_id_map']
@@ -183,12 +183,12 @@ def main():
     
     # Apply volume
     if args.volume != 1.0:
-        print(f"🔊 Applying volume factor: {args.volume}")
+        print(f"Applying volume factor: {args.volume}")
         audio_data = audio_data * args.volume
         audio_data = np.clip(audio_data, -1.0, 1.0)  # Ensure values are in valid range
     
     # Save audio using wave module (same as piper_stream_onnx.py)
-    print(f"💾 Saving audio to: {args.output}")
+    print(f"Saving audio to: {args.output}")
     
     # Convert to int16
     audio_int16 = np.clip(audio_data, -1.0, 1.0)
@@ -202,13 +202,13 @@ def main():
     
     # Print stats
     duration = len(audio_data) / sample_rate
-    print(f"✅ Audio generated successfully!")
-    print(f"📊 Duration: {duration:.2f} seconds")
-    print(f"📊 Sample rate: {sample_rate} Hz")
-    print(f"📊 Samples: {len(audio_data)}")
-    print(f"📊 Inference time: {inference_time:.3f} seconds")
-    print(f"📊 Real-time factor: {inference_time / duration:.3f}")
-    print(f"📊 File: {args.output}")
+    print(f"Audio generated successfully!")
+    print(f"Duration: {duration:.2f} seconds")
+    print(f"Sample rate: {sample_rate} Hz")
+    print(f"Samples: {len(audio_data)}")
+    print(f"Inference time: {inference_time:.3f} seconds")
+    print(f"Real-time factor: {inference_time / duration:.3f}")
+    print(f"File: {args.output}")
 
 if __name__ == "__main__":
     main()

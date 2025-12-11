@@ -105,9 +105,9 @@ class TTSEngine:
                         providers=['CPUExecutionProvider']
                     )
                     self.sessions[model_name] = session
-                    print(f"✅ Loaded {model_name} model: {model_path}")
+                    print(f"Loaded {model_name} model: {model_path}")
                 else:
-                    print(f"⚠️ Model not found: {model_name} at {model_path}")
+                    print(f"Model not found: {model_name} at {model_path}")
             
             if not self.sessions:
                 raise FileNotFoundError("No TTS models found")
@@ -125,10 +125,10 @@ class TTSEngine:
                 
             self.phonikud = Phonikud(str(DEFAULT_PHONIKUD))
             
-            print("✅ Models loaded successfully")
+            print("Models loaded successfully")
             
         except Exception as e:
-            print(f"❌ Error loading models: {e}")
+            print(f"Error loading models: {e}")
             raise
 
     def float_to_int16(self, audio_float):

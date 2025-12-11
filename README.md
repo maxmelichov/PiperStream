@@ -551,7 +551,6 @@ This project uses various open-source components. Please check individual compon
 - **Piper TTS**: MIT License
 - **Phonikud**: See phonikud repository
 - **ONNX Runtime**: MIT License
-
 ## 🤝 Contributing
 
 To contribute:
@@ -586,3 +585,4 @@ docker compose up --build -d
 ---
 
 **StreamPiper** - High-performance Hebrew TTS with REST API and Docker support 🎤🔊🐳
+
