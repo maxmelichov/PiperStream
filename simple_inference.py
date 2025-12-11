@@ -48,13 +48,13 @@ def main():
         return
     
     print("🔄 Loading models...")
-    
+    num_threads = os.cpu_count() // 2
     # Encourage deterministic, stable behavior
     os.environ.setdefault('ORT_DISABLE_ALL_OPTIMIZATION', '1')
     # Load ONNX model (same as piper_stream_onnx.py)
     sess_options = ort.SessionOptions()
-    sess_options.inter_op_num_threads = 2
-    sess_options.intra_op_num_threads = 2
+    sess_options.inter_op_num_threads = num_threads
+    sess_options.intra_op_num_threads = 1
     # Deterministic execution and reduced allocator patterning can help avoid artifacts
     sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
     sess_options.enable_mem_pattern = False
