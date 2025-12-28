@@ -14,6 +14,10 @@ High-performance Hebrew TTS with dual voices (male/female) and Swagger UI.
 - **Docker Support**: Containerized deployment with Docker and docker-compose
 - **Custom Training**: Supports custom-trained models from PyTorch Lightning checkpoints
 
+## Onnx Weights
+```
+https://huggingface.co/notmax123/piper-medium-heb
+```
 ## 📁 Project Structure
 
 ```
