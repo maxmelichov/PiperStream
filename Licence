@@ -1,0 +1,42 @@
+Type: Non-Commercial Research License
+
+1. Grant of License
+Subject to the terms and conditions of this License, the authors hereby grant to you a worldwide, royalty-free, non-assignable, and non-exclusive copyright license to:
+
+Reproduce and Modify: You may download, copy, and modify the source code (including dicta_model.py integrations) and documentation for personal, educational, or research purposes.
+
+Distribute: You may distribute copies of the software or derivative works, provided they remain under this same license.
+
+2. Non-Commercial Restrictions
+The "rag-nikud" project and any derivative works (including models fine-tuned using the CLaRa-based RAG pipeline or KNN-BERT retrievers described in this repository) may not be used for commercial purposes. Commercial purposes include, but are not limited to:
+
+Selling the software or access to the software as a service (SaaS).
+
+Using the software to generate diacritized text for sale or commercial publication.
+
+Using the software within a for-profit corporation for internal operational gain without a separate commercial agreement.
+
+3. Attribution
+You must give appropriate credit to the original project ("rag-nikud") and provide a link to the license. You must indicate if changes were made to the original code.
+
+4. ShareAlike
+If you remix, transform, or build upon the material (e.g., integrating a different vector database like Pinecone or FAISS, or implementing a new continuous latent reasoning module), you must distribute your contributions under the same license as the original.
+
+5. Limitation of Liability
+The software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.
+
+6. Academic Citation
+If this project is used in the context of academic research, please cite the underlying architectures that informed the project:
+
+He et al. (2026). CLaRa: Bridging Retrieval and Generation with Continuous Latent Reasoning.
+
+Li et al. (2021). KNN-BERT: Fine-Tuning Pre-Trained Models with KNN Classifier.
+
+Dicta: The Center for Text Analysis (DictaBERT).
+
+Implementation Instructions:
+Create a file named LICENSE in your root directory.
+
+Paste the text above into the file.
+
+(Optional) Add a NOTICE file if you wish to specifically credit the contributors to the dicta_model.py script or the specific papers uploaded (arXiv:2511.18659v3 and arXiv:2110.02523v1).
