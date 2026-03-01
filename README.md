@@ -2,6 +2,8 @@
 
 High-performance Hebrew TTS with dual voices (male/female) and Swagger UI.
 
+weights notmax123/piper-medium-heb
+
 ## 🎯 Features
 
 - **Hebrew TTS**: Native Hebrew text-to-speech synthesis with dual voice models (male/female)  
