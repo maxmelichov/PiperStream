@@ -2,7 +2,7 @@
 
 High-performance Hebrew TTS with dual voices (male/female) and Swagger UI.
 
-weights notmax123/piper-medium-heb
+[weights](https://huggingface.co/notmax123/piper-medium-heb)
 
 ## 🎯 Features
 
